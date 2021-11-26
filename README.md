@@ -1,18 +1,30 @@
+# Description
+
+Unable to start quokka on file with code that relies on [zod](https://github.com/colinhacks/zod) package
+
 ## Steps to reproduce
 
 - `npm install`
 - try to start quokka on `source\index.ts` (this will crash)
 
 ```
-TypeError [ERR_INVALID_RETURN_PROPERTY_VALUE]: Expected string, array buffer, or typed array to be returned for the "source" from the "load" function but got type undefined. 
-    at new NodeError (node:internal/errors:371:5) 
-    at assertBufferSource (node:internal/modules/esm/translators:87:9) 
-    at ESMLoader.moduleStrategy (node:internal/modules/esm/translators:135:3) 
-    at ESMLoader.moduleProvider (node:internal/modules/esm/loader:236:14)
+ReferenceError: extensionFormatMap is not defined 
+    at ESMLoader.load (node:internal/modules/esm/loader:303:26) 
+    at ESMLoader.moduleProvider (node:internal/modules/esm/loader:230:58) 
+    at new ModuleJob (node:internal/modules/esm/module_job:63:26) 
+    at ESMLoader.getModuleJob (node:internal/modules/esm/loader:244:11) 
+    at async ModuleWrap.<anonymous> (node:internal/modules/esm/module_job:78:21) 
+    at async Promise.all (index 1) 
+    at async link (node:internal/modules/esm/module_job:83:9) 
 ```
 
-- replace dependency to pre `ems` version with `npm install parse-json@5.2.0`
-- try to start quokka on `source\index.ts` (this will work)
+- trying to launch the same file in vscode debugger will work (with ts-node/esm loader) or simply invoking:
+
+```
+node --experimental-specifier-resolution=node --loader ts-node/esm source/index.ts
+```
+
+- removing `zod` related code will also resolve the issue
 
 ## Quokka config
 
@@ -33,7 +45,7 @@ TypeError [ERR_INVALID_RETURN_PROPERTY_VALUE]: Expected string, array buffer, or
 
 ```
 node: v17.0.1
-TypeScript: v4.5.1-rc
+TypeScript: v4.5.2
 ```
 
 ## VS Code Insider
